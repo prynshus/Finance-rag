@@ -4,5 +4,5 @@ transformers
 torch
 sentence-transformers
 pypdf
-flask
 streamlit
+pdfplumber
