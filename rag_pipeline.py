@@ -4,7 +4,7 @@ from transformers import pipeline
 from document_loader import is_table
 
 # load LLM
-generator = pipeline("text2text-generation", model="google/flan-t5-large")
+generator = pipeline("text2text-generation", model="google/flan-t5-base")
 
 def chunk_text(text, chunk_size=150, overlap=50):
     words = text.split()
