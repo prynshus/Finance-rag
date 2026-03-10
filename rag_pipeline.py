@@ -2,9 +2,13 @@ from embeddings import get_embedding
 from vector_store import VectorStore
 from transformers import pipeline
 from document_loader import is_table
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+import torch
 
-# load LLM
-generator = pipeline("text2text-generation", model="google/flan-t5-base")
+model_name = "google/flan-t5-base"
+
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
 def chunk_text(text, chunk_size=150, overlap=50):
     words = text.split()
@@ -75,14 +79,11 @@ Explain clearly and simply.
 Answer:
 """
 
-    response = generator(
-        prompt,
-        max_length=200,
-        do_sample=True,
-        temperature=0.7
-    )
+    inputs = tokenizer(prompt, return_tensors="pt", truncation=True)
 
-    answer = response[0]["generated_text"]
+    outputs = model.generate(**inputs, max_length=200)
+
+    answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
     citation = f"\n\nSources: pages {pages}"
 
